@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>BAADS Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/datatables.min.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/fixedColumns.dataTables.min.css') }}">
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Martel+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body style="padding-top: 0px;" id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
+        <div class="container" id="nav-top">
+        
+            <a href="index.html"><img class="navbar-brand js-scroll-trigger ml-3" src="{{ url_for('static', filename='assets/baads.jpeg') }}" width ="100px" height = "70px"></a>
+            <button class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu <i class="fas fa-bars"></i></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto mr-4">
+                    <!-- <liass=" nav-item mx-0 mx-lg-1"><a class="notcurrent nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" target=”_blank” href="https://connect-resource-finder.herokuapp.com/">Resource Finder</a></li> -->
+                    <li class="nav-item mx-0 mx-lg-1"><a class="notcurrent nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="https://www.baads.org">Website</a></li>
+                </ul>
+                
+            </div>
+            
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 25vh;">
+        <h1>BAADS Sign Up Responses</h1>
+
+        <table id="test" class="table">
+            <thead>
+                <th></th>
+                <th>Timestamp</th>
+                <th>Name</th>
+                <th>Assistance Required?</th>
+                <th>Program</th>
+            </thead>
+        </table>
+    </div>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/datatables.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/dataTables.fixedColumns.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/js.js') }}"></script>
+
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/trix.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/trix.js') }}"></script>
+    
+    <script>
+        function format (d) {
+            // console.log(d['Timestamp']);
+            // `d` is the original data object for the row
+            
+            var returnString1 = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; border:none;">'+
+                '<tr>'+
+                    '<td>Number:</td>'+
+                    '<td>'+d.phone+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Email:</td>'+
+                    '<td><a href="mailto:'+d.email+'">'+d.email+'</a></td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Disabilities:</td>'+
+                    '<td>'+d.disabilities+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Desired Boat:</td>'+
+                    '<td>'+d.boat+'</td>'+
+                '</tr>';
+                if (d.address === "") {
+                    var returnString2 = '</table>';
+                } else {
+                    var returnString2 = '<tr><td>Dropoff Location:</td><td><a href="https://maps.google.com/?q='+encodeURIComponent(d.address)+'">'+d.address+'</a></td>'+
+                                        '</tr></table>';
+                }
+                
+
+            return returnString1 + returnString2;
+        }
+
+        $(document).ready(function () {
+            var table = $('#test').removeAttr('width').DataTable({
+                "ajax": "http://127.0.0.1:5000/data",
+                "columns": [
+                    {
+                        "className":      'details-control',
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ''
+                    },
+                    { "data": "timestamp" },
+                    { "data": "name" },
+                    { "data": "assistance" },
+                    { "data": "program" },
+                    // { "data": "salary" }
+                ],
+                // scrollX: true,
+                // scrollCollapse: true,
+                paging: false,
+                // "order": [[2, 'asc']],
+                columnDefs: [
+                    // { width: "25%", targets: 0 },
+                    { width: "20%", targets: 1 },
+                    { width: "20%", targets: 2 },
+                    { width: "20%", targets: 3 },
+                    { width: "40%", targets: 4 },
+                ],
+                // fixedColumns: true
+            });
+
+            // Add event listener for opening and closing details
+            $('#test tbody').on('click', 'td.details-control', function () {
+                console.log("hello");
+                var tr = $(this).closest('tr');
+                var row = table.row( tr );
+        
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+                    tr.removeClass('')
+                    row.child(format(row.data())).show();
+                    console.log(row.data());
+                    tr.addClass('shown');
+                }
+            });
+
+        });
+        
+    </script>
+</body>
+
+</html>
